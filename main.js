@@ -2,15 +2,31 @@
 
 function gameBot() {
 
-  let hiddenNumber = Math.ceil(Math.random() * 99);
-  console.log('Загаданное число:', hiddenNumber);
-
   let endFlag = null;
-  let userAnswer;
+  let countAttempts = 10;
 
-  function gameBotInner() {
-    userAnswer = prompt('Введи число от 1 до 100');
+  let hiddenNumber;
+  let userNumber;
 
+  const getHiddenNumber = () => {
+    let randomNumber = Math.ceil(Math.random() * 99);
+    console.log('Загаданное число:', randomNumber);
+    return randomNumber;
+  };
+
+  const playAgain = () => {
+    countAttempts = 10;
+    userNumber = undefined;
+    hiddenNumber = getHiddenNumber();
+    gameBotInner();
+  };
+
+  const isNumber = (number) => {
+    return !isNaN(parseInt(number)) && isFinite(number);
+  };
+
+  const getNumberFromPrompt = () => {
+    let userAnswer = prompt('Введи число от 1 до 100');
     if (userAnswer === endFlag) {
       alert('Игра окончена');
       return;
@@ -18,24 +34,48 @@ function gameBot() {
       userAnswer = parseInt(userAnswer);
     } else {
       alert('Введи число!');
-      gameBotInner();
+      getNumberFromPrompt();
+    }
+    return userAnswer;
+  };
+
+  const gameBotInner = () => {
+
+    if (countAttempts === 0) {
+      let playAgainFlag = confirm('Попытки закончились, хотите сыграть еще?');
+      if (playAgainFlag) {
+        playAgain();
+        return;
+      } else {
+        alert('Это была прикольная игра!\n\nВозвращайся, пожалуйста, ещё!');
+        return;
+      }
     }
 
-    function isNumber(number) {
-      return !isNaN(parseInt(number)) && isFinite(number);
-    }
+    userNumber = getNumberFromPrompt();
 
-    if (userAnswer < hiddenNumber) {
-      alert('Загаданное число больше!');
+    if (userNumber < hiddenNumber) {
+      alert(`Загаданное число больше.\n\nОсталось попыток ${--countAttempts}`);
       gameBotInner();
-    } else if (userAnswer > hiddenNumber) {
-      alert('Загаднное число меньше!');
-      gameBotInner();
-    } else {
-      alert('Вы угадали число!');
       return;
+    } else if (userNumber > hiddenNumber) {
+      alert(`Загаданное число меньше.\n\nОсталось попыток ${--countAttempts}`);
+      gameBotInner();
+      return;
+    } else {
+      let runAgainFlag = confirm('Поздравляю, Вы угадали!!! Хотели бы сыграть еще ?');
+      if (runAgainFlag === true) {
+        playAgain();
+        return;
+      } else if (runAgainFlag === false) {
+        alert('Это была прикольная игра!\n\nВозвращайся, пожалуйста, ещё!');
+        return;
+      }
     }
-  }
+    return;
+  };
+
+  hiddenNumber = getHiddenNumber();
   return gameBotInner;
 }
 
