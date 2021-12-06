@@ -2,7 +2,6 @@
 
 function gameBot() {
 
-  let endFlag = null;
   let countAttempts = 10;
 
   let hiddenNumber;
@@ -27,14 +26,15 @@ function gameBot() {
 
   const getNumberFromPrompt = () => {
     let userAnswer = prompt('Введи число от 1 до 100');
-    if (userAnswer === endFlag) {
+    if (userAnswer === null) {
       alert('Игра окончена');
       return;
     } else if (isNumber(userAnswer)) {
       userAnswer = parseInt(userAnswer);
     } else {
       alert('Введи число!');
-      getNumberFromPrompt();
+      gameBotInner();
+      return;
     }
     return userAnswer;
   };
@@ -62,7 +62,7 @@ function gameBot() {
       alert(`Загаданное число меньше.\n\nОсталось попыток ${--countAttempts}`);
       gameBotInner();
       return;
-    } else {
+    } else if (userNumber === hiddenNumber) {
       let runAgainFlag = confirm('Поздравляю, Вы угадали!!! Хотели бы сыграть еще ?');
       if (runAgainFlag === true) {
         playAgain();
@@ -72,7 +72,6 @@ function gameBot() {
         return;
       }
     }
-    return;
   };
 
   hiddenNumber = getHiddenNumber();
